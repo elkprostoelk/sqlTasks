@@ -1,0 +1,3 @@
+ALTER TABLE book_accountance ADD book_author VARCHAR(15);
+ALTER TABLE book_accountance MODIFY COLUMN book_author VARCHAR(20);
+ALTER TABLE book_accountance DROP COLUMN book_author;
