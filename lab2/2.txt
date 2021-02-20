@@ -1,0 +1,25 @@
+SELECT N AS `Номер`, val_code AS `Код`, isNew AS `Новинка`, book_title AS `Назва`, price AS `Ціна`, pages AS `Сторінки` FROM book_accountance;
+SELECT * FROM `book_accountance`;
+SELECT val_code AS `Код`, book_title AS `Назва`, isNew AS `Новинка`, pages AS `Сторінки`, price AS `Ціна`, N AS `Номер` FROM book_accountance;
+SELECT * FROM `book_accountance` LIMIT 10;
+
+SELECT DISTINCT val_code AS `Код` FROM book_accountance;
+SELECT * FROM `book_accountance` WHERE isNew='Yes';
+SELECT * FROM `book_accountance` WHERE isNew='Yes' AND price BETWEEN 20 AND 30;
+SELECT * FROM `book_accountance` WHERE isNew='Yes' AND price NOT BETWEEN 20 AND 30;
+SELECT * FROM `book_accountance` WHERE pages BETWEEN 300 AND 400 AND price BETWEEN 20 and 30;
+SELECT * FROM `book_accountance` WHERE pub_date BETWEEN CAST('2000-01-01' AS DATE) AND CAST('2000-02-29' AS DATE);
+SELECT * FROM `book_accountance` WHERE val_code=5110 OR val_code=5141 OR val_code=4985 OR val_code=4241;
+SELECT * FROM `book_accountance` WHERE pub_date LIKE '1999%' OR pub_date LIKE '2001%' OR pub_date LIKE '2003%' OR pub_date LIKE '2005%';
+SELECT * FROM `book_accountance` WHERE book_title>='А' AND book_title<'Л';
+SELECT * FROM `book_accountance` WHERE book_title LIKE 'АПП%' AND pub_date LIKE '2000%' AND price<20;
+SELECT * FROM `book_accountance` WHERE book_title LIKE 'АПП%Е' AND pub_date BETWEEN CAST('2000-01-01' AS DATE) AND CAST('2000-06-30' AS DATE);
+SELECT * FROM `book_accountance` WHERE book_title LIKE '%Microsoft%' AND book_title NOT LIKE '%Windows%';
+SELECT * FROM `book_accountance` WHERE book_title RLIKE '[0-9]';
+SELECT * FROM `book_accountance` WHERE book_title RLIKE '.*[0-9].*[0-9].*[0-9].*';
+SELECT * FROM `book_accountance` WHERE book_title RLIKE '.*[0-9].*[0-9].*[0-9].*[0-9].*[0-9].*' AND NOT RLIKE '.*[0-9].*[0-9].*[0-9].*[0-9].*[0-9].*[0-9].*';
+
+
+
+
+
