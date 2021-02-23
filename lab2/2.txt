@@ -17,7 +17,7 @@ SELECT * FROM `book_accountance` WHERE book_title LIKE 'АПП%Е' AND pub_date 
 SELECT * FROM `book_accountance` WHERE book_title LIKE '%Microsoft%' AND book_title NOT LIKE '%Windows%';
 SELECT * FROM `book_accountance` WHERE book_title RLIKE '[0-9]';
 SELECT * FROM `book_accountance` WHERE book_title RLIKE '.*[0-9].*[0-9].*[0-9].*';
-SELECT * FROM `book_accountance` WHERE book_title RLIKE '.*[0-9].*[0-9].*[0-9].*[0-9].*[0-9].*' AND NOT RLIKE '.*[0-9].*[0-9].*[0-9].*[0-9].*[0-9].*[0-9].*';
+SELECT * FROM `book_accountance` WHERE book_title RLIKE '.*[0-9].*[0-9].*[0-9].*[0-9].*[0-9].*' AND book_title NOT RLIKE '.*[0-9].*[0-9].*[0-9].*[0-9].*[0-9].*[0-9].*';
 
 
 
