@@ -7,7 +7,7 @@ SELECT * FROM `book_accountance` WHERE pages BETWEEN 300 AND 400 ORDER BY book_t
 SELECT * FROM `book_accountance` WHERE price BETWEEN 20 AND 40 ORDER BY pub_date DESC;
 SELECT * FROM `book_accountance` ORDER BY book_title ASC, price DESC;
 SELECT * FROM `book_accountance` WHERE (price*27.90)/CAST(pages AS FLOAT)<0.10
-SELECT LENGTH(book_title) AS `Число символів в назві`, UPPER(SUBSTRING(book_title, 1, 20)) AS `Перші 20 символів назви` FROM `book_accountance`;
+SELECT LENGTH(book_title) AS `Число символів в назві`, UPPER(LEFT(book_title, 20)) AS `Перші 20 символів назви` FROM `book_accountance`;
 SELECT UPPER(CONCAT(LEFT(book_title, 10), '...', RIGHT(book_title, 10))) AS `перші 10 і останні 10 символів назви прописними буквами, розділені '...'` FROM `book_accountance`;
 SELECT book_title AS `Назва`, pub_date AS `Дата`, DAYNAME(pub_date) AS `День`, MONTHNAME(pub_date) AS `Місяць`, YEAR(pub_date) AS `Рік` FROM `book_accountance`;
 SELECT book_title AS `Назва`, pub_date AS `Дата`, DATE_FORMAT(pub_date, '%d/%m/%Y') AS `дата в форматі 'dd / mm / yyyy'` FROM `book_accountance`;
