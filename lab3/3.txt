@@ -1,7 +1,7 @@
 SELECT * FROM `book_accountance` WHERE price=NULL OR price=0.00;
 SELECT * FROM `book_accountance` WHERE (NOT price=NULL) AND tirage=NULL;
 SELECT * FROM `book_accountance` WHERE pub_date=NULL;
-SELECT * FROM `book_accountance` WHERE YEAR(CURRENT_DATE-pub_date)<=1;
+SELECT * FROM `book_accountance` WHERE YEAR(CURRENT_DATE)-YEAR(pub_date)<=22;
 SELECT * FROM `book_accountance` WHERE isNew='Yes' ORDER BY price ASC;
 SELECT * FROM `book_accountance` WHERE pages BETWEEN 300 AND 400 ORDER BY book_title DESC;
 SELECT * FROM `book_accountance` WHERE price BETWEEN 20 AND 40 ORDER BY pub_date DESC;
