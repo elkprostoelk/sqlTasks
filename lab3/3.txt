@@ -1,20 +1,39 @@
-SELECT * FROM `book_accountance` WHERE price=NULL OR price=0.00;
-SELECT * FROM `book_accountance` WHERE (NOT price=NULL) AND tirage=NULL;
-SELECT * FROM `book_accountance` WHERE pub_date=NULL;
-SELECT * FROM `book_accountance` WHERE YEAR(CURRENT_DATE)-YEAR(pub_date)<=1;
-SELECT * FROM `book_accountance` WHERE isNew='Yes' ORDER BY price ASC;
+SELECT * FROM `book_accountance` WHERE price IS NULL OR price<=>0.00;
+
+SELECT * FROM `book_accountance` WHERE price IS NOT NULL AND tirage IS NULL;
+
+SELECT * FROM `book_accountance` WHERE pub_date IS NULL;
+
+SELECT * FROM `book_accountance` WHERE DATEDIFF(CURRENT_DATE,pub_date)<=365;
+
+SELECT * FROM `book_accountance` WHERE isNew<=>'Yes' ORDER BY price ASC;
+
 SELECT * FROM `book_accountance` WHERE pages BETWEEN 300 AND 400 ORDER BY book_title DESC;
+
 SELECT * FROM `book_accountance` WHERE price BETWEEN 20 AND 40 ORDER BY pub_date DESC;
+
 SELECT * FROM `book_accountance` ORDER BY book_title ASC, price DESC;
+
 SELECT * FROM `book_accountance` WHERE (price*27.90)/CAST(pages AS FLOAT)<0.10
+
 SELECT LENGTH(book_title) AS `Число символів в назві`, UPPER(LEFT(book_title, 20)) AS `Перші 20 символів назви` FROM `book_accountance`;
+
 SELECT UPPER(CONCAT(LEFT(book_title, 10), '...', RIGHT(book_title, 10))) AS `перші 10 і останні 10 символів назви прописними буквами, розділені '...'` FROM `book_accountance`;
+
 SELECT book_title AS `Назва`, pub_date AS `Дата`, DAYNAME(pub_date) AS `День`, MONTHNAME(pub_date) AS `Місяць`, YEAR(pub_date) AS `Рік` FROM `book_accountance`;
+
 SELECT book_title AS `Назва`, pub_date AS `Дата`, DATE_FORMAT(pub_date, '%d/%m/%Y') AS `дата в форматі 'dd / mm / yyyy'` FROM `book_accountance`;
+
 SELECT val_code AS `Код`, price AS `Ціна`, price*27.90 AS `Ціна в грн`, price*0.82 AS `Ціна в євро`, price*74.16 AS `Ціна в руб` FROM `book_accountance`;
+
 SELECT val_code AS `Код`, price AS `Ціна`, TRUNCATE(price*27.90, 0) AS `Ціна в грн без копійок`, ROUND(price*27.90, 0) AS `Ціна в грн округлена` FROM `book_accountance`;
+
 INSERT INTO book_accountance (`N`, `val_code`, `isNew`, `book_title`, `price`, `publisher`, `pages`, `b_format`, `pub_date`, `tirage`, `topic`, `category`) VALUE (228, 1337, 'No', 'Harry Potter and the Sorcerer`s Stone', 7.84, 'Bloomsbury', 223, NULL, '1997-06-26', 10000, 'Магічний світ', 'Фентезі');
+
 INSERT INTO book_accountance(N, val_code, book_title, price, publisher) VALUE(230, 1400, 'Harry Potter and the Chamber of Secrets', 8.01, 'Bloomsbury');
+
 DELETE FROM `book_accountance` WHERE YEAR(pub_date)<1990;
-UPDATE `book_accountance` SET `pub_date`=CURRENT_DATE WHERE pub_date=NULL;
+
+UPDATE `book_accountance` SET `pub_date`=CURRENT_DATE WHERE pub_date IS NULL;
+
 UPDATE `book_accountance` SET `isNew`='Yes' WHERE YEAR(pub_date)>=2005;
