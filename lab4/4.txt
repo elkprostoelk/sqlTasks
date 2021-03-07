@@ -1,0 +1,28 @@
+//1.	Вивести статистику: загальна кількість всіх книг, їх вартість, їх середню вартість, мінімальну і максимальну ціну
+SELECT COUNT(price) AS `Кількість книг`, SUM(price) AS `Загальна вартість`, ROUND(AVG(price),2) AS `Середня вартість`, MIN(price) AS `Мінімальна ціна`, MAX(price) AS `Максимальна ціна` FROM book_accountance;
+
+//2.	Вивести загальну кількість всіх книг без урахування книг з непроставленою ціною
+SELECT COUNT(book_title) FROM `book_accountance` WHERE price IS NOT NULL;
+
+//3.	Вивести статистику (див. 1) для книг новинка / не новинка
+SELECT isNew AS `Новинка`, COUNT(price) AS `Кількість книг`, SUM(price) AS `Загальна вартість`, ROUND(AVG(price),2) AS `Середня вартість`, MIN(price) AS `Мінімальна ціна`, MAX(price) AS `Максимальна ціна` FROM book_accountance GROUP BY isNew;
+
+//4.	Вивести статистику (див. 1) для книг за кожним роком видання
+SELECT YEAR(pub_date) AS `Рік видання`, COUNT(price) AS `Кількість книг`, SUM(price) AS `Загальна вартість`, ROUND(AVG(price),2) AS `Середня вартість`, MIN(price) AS `Мінімальна ціна`, MAX(price) AS `Максимальна ціна` FROM book_accountance GROUP BY YEAR(pub_date);
+
+//5.	Змінити п.4, виключивши з статистики книги з ціною від 10 до 20
+SELECT YEAR(pub_date) AS `Рік видання`, COUNT(price) AS `Кількість книг`, SUM(price) AS `Загальна вартість`, ROUND(AVG(price),2) AS `Середня вартість`, MIN(price) AS `Мінімальна ціна`, MAX(price) AS `Максимальна ціна` FROM book_accountance WHERE price NOT BETWEEN 10 AND 20 GROUP BY YEAR(pub_date);
+
+//6.	Змінити п.4. Відсортувати статистику по спадаючій кількості.
+SELECT YEAR(pub_date) AS `Рік видання`, COUNT(price) AS `Кількість книг`, SUM(price) AS `Загальна вартість`, ROUND(AVG(price),2) AS `Середня вартість`, MIN(price) AS `Мінімальна ціна`, MAX(price) AS `Максимальна ціна` FROM book_accountance GROUP BY YEAR(pub_date) ORDER BY COUNT(price) DESC;
+
+//7.	Вивести загальну кількість кодів книг і кодів книг що не повторюються
+SELECT COUNT(val_code) AS `Кількість кодів`, COUNT(DISTINCT val_code) AS `Кількість кодів без повторень` FROM `book_accountance`;
+
+//8.	Вивести статистику: загальна кількість і вартість книг по першій букві її назви
+SELECT LEFT(book_title,1) AS `Перша літера назви`, COUNT(book_title) AS `Кількість книг з назвою на цю літеру`, SUM(price) AS `Сумарна вартість` FROM `book_accountance` GROUP BY LEFT(book_title,1);
+
+//9.	Змінити п. 8, виключивши з статистики назви що починаються з англ. букви або з цифри.
+SELECT LEFT(book_title,1) AS `Перша літера назви`, COUNT(book_title) AS `Кількість книг з назвою на цю літеру`, SUM(price) AS `Сумарна вартість` FROM `book_accountance` WHERE LEFT(book_title,1) NOT BETWEEN 'A' AND 'z' AND LEFT(book_title,1) NOT BETWEEN '0' AND '9' GROUP BY LEFT(book_title,1);
+
+//10.	Змінити п. 9 так щоб до складу статистики потрапили дані з роками більшими за 2000.
