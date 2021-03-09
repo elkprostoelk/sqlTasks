@@ -1,20 +1,20 @@
 //1.	Вивести статистику: загальна кількість всіх книг, їх вартість, їх середню вартість, мінімальну і максимальну ціну
-SELECT COUNT(price) AS `Кількість книг`, SUM(price) AS `Загальна вартість`, ROUND(AVG(price),2) AS `Середня вартість`, MIN(price) AS `Мінімальна ціна`, MAX(price) AS `Максимальна ціна` FROM book_accountance;
+SELECT COUNT(price) AS `Кількість книг`, SUM(price) AS `Загальна вартість`, AVG(price) AS `Середня вартість`, MIN(price) AS `Мінімальна ціна`, MAX(price) AS `Максимальна ціна` FROM book_accountance;
 
 //2.	Вивести загальну кількість всіх книг без урахування книг з непроставленою ціною
 SELECT COUNT(book_title) FROM `book_accountance` WHERE price IS NOT NULL;
 
 //3.	Вивести статистику (див. 1) для книг новинка / не новинка
-SELECT isNew AS `Новинка`, COUNT(price) AS `Кількість книг`, SUM(price) AS `Загальна вартість`, ROUND(AVG(price),2) AS `Середня вартість`, MIN(price) AS `Мінімальна ціна`, MAX(price) AS `Максимальна ціна` FROM book_accountance GROUP BY isNew;
+SELECT isNew AS `Новинка`, COUNT(price) AS `Кількість книг`, SUM(price) AS `Загальна вартість`, AVG(price) AS `Середня вартість`, MIN(price) AS `Мінімальна ціна`, MAX(price) AS `Максимальна ціна` FROM book_accountance GROUP BY isNew;
 
 //4.	Вивести статистику (див. 1) для книг за кожним роком видання
-SELECT YEAR(pub_date) AS `Рік видання`, COUNT(price) AS `Кількість книг`, SUM(price) AS `Загальна вартість`, ROUND(AVG(price),2) AS `Середня вартість`, MIN(price) AS `Мінімальна ціна`, MAX(price) AS `Максимальна ціна` FROM book_accountance GROUP BY YEAR(pub_date);
+SELECT YEAR(pub_date) AS `Рік видання`, COUNT(price) AS `Кількість книг`, SUM(price) AS `Загальна вартість`, AVG(price) AS `Середня вартість`, MIN(price) AS `Мінімальна ціна`, MAX(price) AS `Максимальна ціна` FROM book_accountance GROUP BY YEAR(pub_date);
 
 //5.	Змінити п.4, виключивши з статистики книги з ціною від 10 до 20
-SELECT YEAR(pub_date) AS `Рік видання`, COUNT(price) AS `Кількість книг`, SUM(price) AS `Загальна вартість`, ROUND(AVG(price),2) AS `Середня вартість`, MIN(price) AS `Мінімальна ціна`, MAX(price) AS `Максимальна ціна` FROM book_accountance WHERE price NOT BETWEEN 10 AND 20 GROUP BY YEAR(pub_date);
+SELECT YEAR(pub_date) AS `Рік видання`, COUNT(price) AS `Кількість книг`, SUM(price) AS `Загальна вартість`, AVG(price) AS `Середня вартість`, MIN(price) AS `Мінімальна ціна`, MAX(price) AS `Максимальна ціна` FROM book_accountance WHERE price NOT BETWEEN 10 AND 20 GROUP BY YEAR(pub_date);
 
 //6.	Змінити п.4. Відсортувати статистику по спадаючій кількості.
-SELECT YEAR(pub_date) AS `Рік видання`, COUNT(price) AS `Кількість книг`, SUM(price) AS `Загальна вартість`, ROUND(AVG(price),2) AS `Середня вартість`, MIN(price) AS `Мінімальна ціна`, MAX(price) AS `Максимальна ціна` FROM book_accountance GROUP BY YEAR(pub_date) ORDER BY COUNT(price) DESC;
+SELECT YEAR(pub_date) AS `Рік видання`, COUNT(price) AS `Кількість книг`, SUM(price) AS `Загальна вартість`, AVG(price) AS `Середня вартість`, MIN(price) AS `Мінімальна ціна`, MAX(price) AS `Максимальна ціна` FROM book_accountance GROUP BY YEAR(pub_date) ORDER BY COUNT(price) DESC;
 
 //7.	Вивести загальну кількість кодів книг і кодів книг що не повторюються
 SELECT COUNT(val_code) AS `Кількість кодів`, COUNT(DISTINCT val_code) AS `Кількість кодів без повторень` FROM `book_accountance`;
@@ -32,13 +32,13 @@ SELECT LEFT(book_title,1) AS `Перша літера назви`, COUNT(book_ti
 SELECT LEFT(book_title,1) AS `Перша літера назви`, COUNT(book_title) AS `Кількість книг з назвою на цю літеру`, SUM(price) AS `Сумарна вартість` FROM `book_accountance` WHERE NOT LEFT(book_title, 1) REGEXP '[A-Za-z0-9]' AND YEAR(pub_date)>2000 GROUP BY LEFT(book_title, 1) ORDER BY LEFT(book_title,1) DESC;
 
 //12.	Вивести статистику (див. 1) по кожному місяцю кожного року.
-SELECT MONTHNAME(pub_date) AS `Місяць`, COUNT(price) AS `Кількість книг`, SUM(price) AS `Загальна вартість`, ROUND(AVG(price),2) AS `Середня вартість`, MIN(price) AS `Мінімальна ціна`, MAX(price) AS `Максимальна ціна` FROM book_accountance GROUP BY MONTHNAME(pub_date);
+SELECT MONTHNAME(pub_date) AS `Місяць`, YEAR(pub_date) AS `Рік`, COUNT(price) AS `Кількість книг`, SUM(price) AS `Загальна вартість`, AVG(price) AS `Середня вартість`, MIN(price) AS `Мінімальна ціна`, MAX(price) AS `Максимальна ціна` FROM book_accountance GROUP BY MONTHNAME(pub_date), YEAR(pub_date);
 
 //13.	Змінити п. 12 так щоб до складу статистики не увійшли дані з незаповненими датами.
-SELECT MONTHNAME(pub_date) AS `Місяць`, COUNT(price) AS `Кількість книг`, SUM(price) AS `Загальна вартість`, ROUND(AVG(price),2) AS `Середня вартість`, MIN(price) AS `Мінімальна ціна`, MAX(price) AS `Максимальна ціна` FROM book_accountance WHERE pub_date IS NOT NULL GROUP BY MONTHNAME(pub_date);
+SELECT MONTHNAME(pub_date) AS `Місяць`, COUNT(price) AS `Кількість книг`, SUM(price) AS `Загальна вартість`, AVG(price) AS `Середня вартість`, MIN(price) AS `Мінімальна ціна`, MAX(price) AS `Максимальна ціна` FROM book_accountance WHERE pub_date IS NOT NULL GROUP BY MONTHNAME(pub_date);
 
 //14.	Змінити п. 12. Фільтр по спадаючій року і зростанню місяця.
-SELECT MONTHNAME(pub_date) AS `Місяць`, YEAR(pub_date) AS `Рік`, COUNT(price) AS `Кількість книг`, SUM(price) AS `Загальна вартість`, ROUND(AVG(price),2) AS `Середня вартість`, MIN(price) AS `Мінімальна ціна`, MAX(price) AS `Максимальна ціна` FROM book_accountance GROUP BY YEAR(pub_date) DESC, MONTH(pub_date) ASC;
+SELECT MONTHNAME(pub_date) AS `Місяць`, YEAR(pub_date) AS `Рік`, COUNT(price) AS `Кількість книг`, SUM(price) AS `Загальна вартість`, AVG(price) AS `Середня вартість`, MIN(price) AS `Мінімальна ціна`, MAX(price) AS `Максимальна ціна` FROM book_accountance GROUP BY YEAR(pub_date) DESC, MONTH(pub_date) ASC;
 
 //15.	Вивести статистику для книг новинка / не новинка: загальна ціна, загальна ціна в грн. / Євро / руб. Колонкам запиту дати назви за змістом.
 SELECT isNew AS `Новинка`, SUM(price) AS `Загальна ціна`, SUM(price*27.75) AS `Загальна ціна в грн`, SUM(price*0.84) AS `Загальна ціна в євро`, SUM(price*74.35) AS `Загальна ціна в руб` FROM book_accountance GROUP BY isNew;
@@ -47,13 +47,13 @@ SELECT isNew AS `Новинка`, SUM(price) AS `Загальна ціна`, SUM
 SELECT isNew AS `Новинка`, ROUND(SUM(price), 0) AS `Загальна ціна`, ROUND(SUM(price*27.75), 0) AS `Загальна ціна в грн`, ROUND(SUM(price*0.84), 0) AS `Загальна ціна в євро`, ROUND(SUM(price*74.35), 0) AS `Загальна ціна в руб` FROM book_accountance GROUP BY isNew;
 
 //17.	Вивести статистику (див. 1) по видавництвах.
-SELECT publisher AS `Видавництво`, COUNT(price) AS `Кількість книг`, SUM(price) AS `Загальна вартість`, ROUND(AVG(price),2) AS `Середня вартість`, MIN(price) AS `Мінімальна ціна`, MAX(price) AS `Максимальна ціна` FROM book_accountance GROUP BY publisher;
+SELECT publisher AS `Видавництво`, COUNT(price) AS `Кількість книг`, SUM(price) AS `Загальна вартість`, AVG(price) AS `Середня вартість`, MIN(price) AS `Мінімальна ціна`, MAX(price) AS `Максимальна ціна` FROM book_accountance GROUP BY publisher;
 
 //18.	Вивести статистику (див. 1) за темами і видавництвами. Фільтр по видавництвам.
-SELECT publisher AS `Видавництво`, topic AS `Тематика`, COUNT(price) AS `Кількість книг`, SUM(price) AS `Загальна вартість`, ROUND(AVG(price),2) AS `Середня вартість`, MIN(price) AS `Мінімальна ціна`, MAX(price) AS `Максимальна ціна` FROM book_accountance GROUP BY publisher, topic;
+SELECT publisher AS `Видавництво`, topic AS `Тематика`, COUNT(price) AS `Кількість книг`, SUM(price) AS `Загальна вартість`, AVG(price) AS `Середня вартість`, MIN(price) AS `Мінімальна ціна`, MAX(price) AS `Максимальна ціна` FROM book_accountance GROUP BY publisher, topic;
 
 //19.	Вивести статистику (див. 1) за категоріями, темами і видавництвами. Фільтр по видавництвам, темах, категоріям.
-SELECT category AS `Категорія`, topic AS `Тематика`, publisher AS `Видавництво`, COUNT(price) AS `Кількість книг`, SUM(price) AS `Загальна вартість`, ROUND(AVG(price),2) AS `Середня вартість`, MIN(price) AS `Мінімальна ціна`, MAX(price) AS `Максимальна ціна` FROM book_accountance GROUP BY publisher, topic, category;
+SELECT category AS `Категорія`, topic AS `Тематика`, publisher AS `Видавництво`, COUNT(price) AS `Кількість книг`, SUM(price) AS `Загальна вартість`, AVG(price) AS `Середня вартість`, MIN(price) AS `Мінімальна ціна`, MAX(price) AS `Максимальна ціна` FROM book_accountance GROUP BY publisher, topic, category;
 
 //20.	Вивести список видавництв, у яких округлена до цілого ціна однієї сторінки більше 10 копійок.
 SELECT publisher AS `Видавництво`, ROUND(price * 27.75 / CAST(pages AS FLOAT), 0) AS `Ціна однієї сторінки` FROM `book_accountance` WHERE ROUND(price * 27.75 / CAST(pages AS FLOAT), 0) > 0.10;
