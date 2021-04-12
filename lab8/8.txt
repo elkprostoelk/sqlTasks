@@ -72,7 +72,7 @@ BEGIN
     IF (REGEXP_SUBSTR(TRIM(CURRENT_USER()), '^[^\@]+') <> 'root')
     THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Лише користувач dbo може видаляти книги';
     ELSE SET @columnscnt = 0;
-    SELECT COUNT(*) INTO @columnscnt FROM information_schema.`schema1`
+    SELECT COUNT(*) INTO @columnscnt FROM information_schema.`COLUMNS`
         WHERE table_name = 'maininfo' AND TABLE_SCHEMA = 'shop';
     END IF;
 END
