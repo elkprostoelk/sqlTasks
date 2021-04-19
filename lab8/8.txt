@@ -1,23 +1,42 @@
 //1.	Кількість тем може бути в діапазоні від 5 до 10.
-DROP TRIGGER IF EXISTS tr1;
+DROP TRIGGER IF EXISTS tr1ins;
 DELIMITER $$
-CREATE TRIGGER tr1 BEFORE INSERT ON topics FOR EACH ROW
-IF (SELECT COUNT(*) FROM topics) > 10
-THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Кількість тем більша за 10';
-ELSEIF (SELECT COUNT(*) FROM topics) < 5
-THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Кількість тем менша за 5';
+CREATE TRIGGER tr1ins BEFORE INSERT ON maininfo FOR EACH ROW
+BEGIN
+IF (SELECT COUNT(topic) FROM maininfo WHERE NEW.topic<=>maininfo.topic) NOT BETWEEN 5 AND 10
+THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Кількість тем має бути від 5 до 10';
 END IF;
-$$
+END$$
+DELIMITER ;
+DROP TRIGGER IF EXISTS `tr1del`;
+DELIMITER $$
+CREATE TRIGGER `tr1del` BEFORE DELETE ON `maininfo` FOR EACH ROW
+BEGIN
+IF (SELECT COUNT(topic) FROM maininfo WHERE OLD.topic<=>maininfo.topic) NOT BETWEEN 5 AND 10
+THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Кількість тем має бути від 5 до 10';
+END IF;
+END$$
 DELIMITER ;
 
 //2.	Новинкою може бути тільки книга видана в поточному році.
-DROP TRIGGER IF EXISTS tr2;
+DROP TRIGGER IF EXISTS tr2ins;
 DELIMITER $$
-CREATE TRIGGER tr2 BEFORE INSERT ON maininfo FOR EACH ROW
+CREATE TRIGGER tr2ins BEFORE INSERT ON maininfo FOR EACH ROW
+BEGIN
 IF (NEW.isNew <=> 'Yes' && YEAR(NEW.pub_date) <> YEAR(NOW()))
 THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Книга, видана не в поточному році, новинкою бути не може!';
-END IF
-$$
+END IF;
+END$$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS tr2upd;
+DELIMITER $$
+CREATE TRIGGER tr2upd BEFORE UPDATE ON maininfo FOR EACH ROW
+BEGIN
+IF (NEW.isNew <=> 'Yes' AND YEAR(NEW.pub_date) <> YEAR(NOW()))
+THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Книга, видана не в поточному році, новинкою бути не може!';
+END IF;
+END$$
 DELIMITER ;
 
 //3.	Книга з кількістю сторінок до 100 не може коштувати більше 10 $, до 200 - 20 $, до 300 - 30 $.

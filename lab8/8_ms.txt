@@ -1,0 +1,172 @@
+--1.	Кількість тем може бути в діапазоні від 5 до 10.
+CREATE TRIGGER tr1ins ON topics AFTER INSERT AS
+BEGIN
+IF (SELECT COUNT(topic_id) FROM topics) NOT BETWEEN 5 AND 10
+BEGIN
+	PRINT 'Кількість тем має бути від 5 до 10';
+	ROLLBACK TRANSACTION;
+END;
+END;
+
+CREATE TRIGGER tr1del ON topics AFTER DELETE AS
+BEGIN
+IF (SELECT COUNT(topic_id) FROM topics) NOT BETWEEN 5 AND 10
+BEGIN
+	PRINT 'Кількість тем має бути від 5 до 10';
+	ROLLBACK TRANSACTION;
+END;
+END;
+
+--2.	Новинкою може бути тільки книга видана в поточному році.
+CREATE TRIGGER tr2 ON maininfo AFTER INSERT,UPDATE AS
+BEGIN
+DECLARE @new NVARCHAR(MAX), @pubdate DATE;
+SELECT @new = isNew FROM INSERTED;
+SELECT @pubdate = pub_date FROM INSERTED;
+IF (@new = 'Yes' AND YEAR(@pubdate) <> YEAR(GETDATE()))
+BEGIN
+	PRINT 'Книга, видана не в поточному році, новинкою бути не може!';
+	ROLLBACK TRANSACTION;
+END;
+END;
+
+--3.	Книга з кількістю сторінок до 100 не може коштувати більше 10 $, до 200 - 20 $, до 300 - 30 $.
+CREATE TRIGGER tr3 ON maininfo FOR INSERT,UPDATE AS
+BEGIN
+DECLARE @prices FLOAT, @pagescount INT;
+SELECT @prices=price FROM inserted;
+SELECT @pagescount=pages FROM inserted;
+IF ((@prices > 10 AND @pagescount < 100) OR (@prices > 20 AND @pagescount < 200) OR (@prices > 30 AND @pagescount < 300))
+BEGIN
+	PRINT 'Ціна та кількість сторінок не відповідають одні одним';
+	ROLLBACK TRANSACTION;
+END;
+END;
+
+--4.	Видавництво "BHV" не випускає книги накладом меншим 5000, а видавництво Diasoft - 10000.
+CREATE TRIGGER tr4 ON maininfo FOR INSERT,UPDATE AS
+BEGIN
+DECLARE @publishers INT, @tirages INT;
+SELECT @publishers = publisher FROM inserted;
+SELECT @tirages = tirage FROM inserted;
+IF ((@publishers = 2 AND @tirages < 5000) OR (@publishers = 6 AND @tirages < 1000))
+BEGIN	
+	PRINT 'Тираж для вказаного видавництва замалий';
+	ROLLBACK TRANSACTION;
+END;
+END;
+
+--5.	Книги з однаковим кодом повинні мати однакові дані.
+CREATE TRIGGER tr5 ON maininfo FOR INSERT,UPDATE AS
+BEGIN
+	DECLARE @records_count INT,
+	@valcode INT,
+	@isnew nvarchar,
+	@booktitle nvarchar,
+	@prices float,
+	@publishers int,
+	@pagescnt int,
+	@bformat int,
+	@pubdate DATE,
+	@tirages int,
+	@topicsval int,
+	@categrs int;
+    SET @records_count = 0;
+	SELECT @valcode = val_code FROM inserted;
+	SELECT @isnew = isNew from inserted;
+	SELECT @booktitle = book_title from inserted;
+	SELECT @prices = price from inserted;
+	SELECT @publishers = publisher from inserted;
+	SELECT @pagescnt = pages from inserted;
+	SELECT @bformat = b_format from inserted;
+	SELECT @pubdate = pub_date from inserted;
+	SELECT @tirages = tirage from inserted;
+	SELECT @topicsval = topic from inserted;
+	SELECT @categrs = category from inserted;
+    SELECT @records_count = COUNT(*) FROM maininfo
+    WHERE val_code = @valcode AND (
+        isNew <> @isnew OR
+        book_title <> @booktitle OR
+        price <> @prices OR
+        publisher <> @publishers OR
+        pages <> @pagescnt OR
+        b_format <> @bformat OR
+        pub_date <> @pubdate OR
+        tirage <> @tirages OR
+        topic <> @topicsval OR
+        category <> @categrs
+    );
+    IF (@records_count <> 0) PRINT 'Книги з однаковим кодом потрібні містити однакові дані';
+END;
+
+--6.	При спробі видалення книги видається інформація про кількість видалених рядків. Якщо користувач не "dbo", то видалення забороняється.
+CREATE TRIGGER tr6 ON maininfo FOR DELETE AS
+BEGIN
+    IF (CURRENT_USER<>'dbo')
+	BEGIN
+		PRINT 'Лише користувач dbo може видаляти книги';
+		ROLLBACK TRANSACTION;
+	END;
+    ELSE
+	BEGIN
+	DECLARE @del INT;
+	SELECT @del = COUNT(*) FROM deleted;
+	PRINT CAST(@del AS nvarchar) + ' рядків видалено';
+    END;
+END;
+
+--7.	Користувач "dbo" не має права змінювати ціну книги.
+CREATE TRIGGER tr7 ON maininfo FOR UPDATE AS
+BEGIN
+	DECLARE @newpr FLOAT, @oldpr FLOAT;
+	SELECT @newpr = price FROM inserted;
+	SELECT @oldpr = price FROM deleted;
+    IF (CURRENT_USER = 'dbo' AND @newpr <> @oldpr)
+	BEGIN
+        PRINT 'Поточний користувач не має права змінити ціну книги';
+    END;
+END
+
+--8.	Видавництва ДМК і Еком підручники не видають.
+CREATE TRIGGER tr8 ON maininfo FOR INSERT, UPDATE AS
+BEGIN
+	DECLARE @newpub INT, @newcat INT;
+	SELECT @newpub = publisher FROM inserted;
+	SELECT @newcat = category FROM inserted;
+    IF ((@newpub IN (7, 9)) AND @newcat = 2)
+	BEGIN
+        PRINT 'Ці видавництва не видають підручники';
+		ROLLBACK TRANSACTION;
+    END;
+END
+
+--9.	Видавництво не може випустити більше 10 новинок протягом одного місяця поточного року.
+CREATE TRIGGER tr9 ON maininfo FOR INSERT,UPDATE AS
+BEGIN
+    DECLARE @publisher_newbooks_count INT,
+	@publishers INT,
+	@isnew nvarchar;
+	SELECT @publishers = publisher FROM inserted;
+	SELECT @isnew = isNew FROM inserted;
+    SELECT @publisher_newbooks_count = COUNT(*)  FROM maininfo
+    WHERE maininfo.publisher = @publishers AND maininfo.isNew='Yes' AND YEAR(GETDATE()) = YEAR(maininfo.pub_date) AND MONTH(GETDATE()) = MONTH(maininfo.pub_date);
+    IF (@isnew='Yes' AND @publisher_newbooks_count IS NOT NULL AND @publisher_newbooks_count > 10)
+	BEGIN
+        PRINT 'Видавництво не може публікувати більше за 10 новинок на місяць';
+		ROLLBACK TRANSACTION;
+    END;
+END
+
+--10.	Видавництво BHV не випускає книги формату 60х88 / 16.
+CREATE TRIGGER tr10 ON maininfo FOR INSERT, UPDATE AS
+BEGIN
+	DECLARE @publishers INT,
+	@bformat INT;
+	SELECT @publishers = publisher FROM inserted;
+	SELECT @bformat = b_format FROM inserted;
+    IF (@publishers = 2 AND @bformat = 4)
+	BEGIN
+        PRINT 'Видавництво не видає книги у форматі 60х88 / 16';
+		ROLLBACK TRANSACTION;
+    END;
+END
