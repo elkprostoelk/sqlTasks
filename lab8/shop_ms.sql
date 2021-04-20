@@ -246,6 +246,11 @@ BEGIN
 DECLARE @new NVARCHAR(MAX), @pubdate DATE;
 SELECT @new = isNew FROM INSERTED;
 SELECT @pubdate = pub_date FROM INSERTED;
+IF (@new = 'No' AND YEAR(@pubdate) = YEAR(GETDATE()))
+BEGIN
+	PRINT ' нига, видана в поточному роц≥, маЇ бути новинкою!';
+	ROLLBACK TRANSACTION;
+END;
 IF (@new = 'Yes' AND YEAR(@pubdate) <> YEAR(GETDATE()))
 BEGIN
 	PRINT ' нига, видана не в поточному роц≥, новинкою бути не може!';
