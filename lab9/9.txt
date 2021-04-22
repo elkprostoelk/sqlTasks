@@ -32,6 +32,10 @@ BEGIN
 	RETURN;
 END;
 
+DECLARE @string NVARCHAR(MAX);
+SELECT @string = STRING_AGG(publisher_name, ';') FROM publishernames;
+SELECT * from dbo.PublisherList(@string);
+
 --4.	Виконати набір операцій по роботі з SQL курсором: оголосити курсор;
 a.	використовувати змінну для оголошення курсору;
 b.	відкрити курсор;
