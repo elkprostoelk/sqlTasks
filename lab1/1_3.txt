@@ -1,6 +1,6 @@
 ALTER TABLE book_accountance ADD book_author VARCHAR(15);
-ALTER TABLE book_accountance MODIFY COLUMN book_author VARCHAR(20);
+ALTER TABLE book_accountance ALTER COLUMN book_author VARCHAR(20);
 ALTER TABLE book_accountance DROP COLUMN book_author;
-ALTER TABLE book_accountance DROP INDEX idx_title;
+DROP INDEX idx_title ON book_accountance;
 CREATE UNIQUE INDEX idx_title ON book_accountance(book_title DESC);
-ALTER TABLE book_accountance DROP INDEX idx_title;
+DROP INDEX idx_title ON book_accountance;
