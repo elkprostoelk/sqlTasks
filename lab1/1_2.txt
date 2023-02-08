@@ -1,21 +1,26 @@
 DROP DATABASE IF EXISTS shop;
-CREATE DATABASE IF NOT EXISTS shop;
+IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'shop')
+BEGIN
+	CREATE DATABASE shop;
+END;
+
+USE shop;
 CREATE TABLE book_accountance(
-    N SMALLINT(3) NOT NULL PRIMARY KEY,
-    val_code INT(4) NOT NULL DEFAULT 0,
-    isNew VARCHAR(3) NOT NULL DEFAULT 'No',
-    book_title VARCHAR(70) NOT NULL DEFAULT '',
-    price FLOAT(5, 2) NOT NULL CHECK (price > 0),
-    publisher VARCHAR(20) NOT NULL,
-    pages INT(11) DEFAULT NULL,
-    b_format VARCHAR(12) DEFAULT NULL,
+    N SMALLINT NOT NULL PRIMARY KEY,
+    val_code INT NOT NULL DEFAULT 0,
+    isNew NVARCHAR(3) NOT NULL DEFAULT 'No',
+    book_title NVARCHAR(100) NOT NULL DEFAULT '',
+    price MONEY NOT NULL CHECK (price > 0),
+    publisher NVARCHAR(20) NOT NULL,
+    pages INT DEFAULT NULL,
+    b_format NVARCHAR(12) DEFAULT NULL,
     pub_date DATE DEFAULT NULL,
-    tirage INT(11) DEFAULT NULL,
-    topic VARCHAR(25) DEFAULT NULL,
-    category VARCHAR(30) DEFAULT NULL
+    tirage INT DEFAULT NULL,
+    topic NVARCHAR(25) DEFAULT NULL,
+    category NVARCHAR(30) DEFAULT NULL
 );
 CREATE INDEX idx_title ON
-    shop.book_accountance(book_title);
+    book_accountance(book_title);
 INSERT INTO book_accountance(
     N,
     val_code,
@@ -262,5 +267,5 @@ VALUES(
     'Програмування',
     'С&C++'
 );
-UPDATE shop.book_accountance
+UPDATE book_accountance
 SET tirage=5000;
